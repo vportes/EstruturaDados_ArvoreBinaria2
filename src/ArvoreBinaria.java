@@ -8,48 +8,81 @@ public class ArvoreBinaria {
 
     public void inserir(int conteudo) {
         No novoNo = new No(conteudo);
-        No pai;
-        if(raiz == null) {
-            //System.out.println("A raiz foi criada com o conteúdo " + novoNo.getConteudo() + ".");
+        if (raiz == null) {
             raiz = novoNo;
         } else {
-            //Verificar se ficara a esq ou direita
             No atual = raiz;
-            while(true) {
+            No pai;
+            while (true) {
                 pai = atual;
-                if(novoNo.getConteudo() <= atual.getConteudo()) {
-                    //posicionar o nó à esq
+                if (novoNo.getConteudo() <= atual.getConteudo()) {
                     atual = atual.getEsquerda();
-                    if(atual == null) {
+                    if (atual == null) {
                         pai.setEsquerda(novoNo);
-                        //System.out.println("O nó com conteúdo " + novoNo.getConteudo() + " foi inserido com sucesso, onde seu pai é igual a: " + pai.getConteudo());
                         return;
                     }
                 } else {
-                    //posicionar o nó à dir
                     atual = atual.getDireita();
-                    if(atual == null) {
+                    if (atual == null) {
                         pai.setDireita(novoNo);
-                        //System.out.println("O nó com conteúdo " + novoNo.getConteudo() + " foi inserido com sucesso, onde seu pai é igual a: " + pai.getConteudo());
                         return;
                     }
                 }
             }
-
         }
     }
 
+    public void remover(int conteudo) {
+        raiz = removerRecursivo(raiz, conteudo);
+    }
+
+    private No removerRecursivo(No raiz, int conteudo) {
+        if (raiz == null) {
+            return raiz;
+        }
+
+        if (conteudo < raiz.getConteudo()) {
+            raiz.setEsquerda(removerRecursivo(raiz.getEsquerda(), conteudo));
+        } else if (conteudo > raiz.getConteudo()) {
+            raiz.setDireita(removerRecursivo(raiz.getDireita(), conteudo));
+        } else {
+            // Caso 1: nó folha
+            if (raiz.getEsquerda() == null && raiz.getDireita() == null) {
+                return null;
+            }
+            // Caso 2: nó com um filho
+            if (raiz.getEsquerda() == null) {
+                return raiz.getDireita();
+            } else if (raiz.getDireita() == null) {
+                return raiz.getEsquerda();
+            }
+            // Caso 3: nó com dois filhos
+            No sucessor = getSucessor(raiz.getDireita());
+            raiz.setConteudo(sucessor.getConteudo());
+            raiz.setDireita(removerRecursivo(raiz.getDireita(), sucessor.getConteudo()));
+        }
+        return raiz;
+    }
+
+    private No getSucessor(No raiz) {
+        No atual = raiz;
+        while (atual.getEsquerda() != null) {
+            atual = atual.getEsquerda();
+        }
+        return atual;
+    }
+
     public void preOrdem(No no) {
-        if(no == null) {
+        if (no == null) {
             return;
         }
-        System.out.println(no.getConteudo());
+        System.out.print(no.getConteudo() + " ");
         preOrdem(no.getEsquerda());
         preOrdem(no.getDireita());
     }
 
     public void emOrdem(No no) {
-        if(no == null) {
+        if (no == null) {
             return;
         }
         emOrdem(no.getEsquerda());
@@ -58,17 +91,18 @@ public class ArvoreBinaria {
     }
 
     public void posOrdem(No no) {
-        if(no == null) {
+        if (no == null) {
             return;
         }
         posOrdem(no.getEsquerda());
         posOrdem(no.getDireita());
-        System.out.print(no.getConteudo()+" ");
+        System.out.print(no.getConteudo() + " ");
     }
 
     public No getRaiz() {
         return raiz;
     }
+
     public No buscar(int numero) {
         return buscaRecursiva(raiz, numero);
     }
@@ -85,7 +119,6 @@ public class ArvoreBinaria {
     }
 
     public void mostrarCaminho(int numero) {
-        System.out.println("\n");
         if (buscaRecursiva(raiz, numero) == null) {
             System.out.println("Número não encontrado na árvore.");
         } else {
@@ -111,4 +144,23 @@ public class ArvoreBinaria {
         }
     }
 
+    public void imprimirArvore() {
+        System.out.println("\n\nArvore binária: ");
+        System.out.print("\n    ");
+        imprimirArvoreRecursivo(raiz, "", true, true);
+    }
+
+    private void imprimirArvoreRecursivo(No no, String prefixo, boolean eFolha, boolean eNo) {
+        if (no != null) {
+            System.out.println(prefixo + (eNo ? "" : (eFolha ? "└── " : "├── ")) + no.getConteudo());
+            if (no.getEsquerda() != null || no.getDireita() != null) {
+                if (no.getDireita() != null) {
+                    imprimirArvoreRecursivo(no.getDireita(), prefixo + (eNo ? "    " : (eFolha ? "    " : "│   ")), no.getEsquerda() == null, false);
+                }
+                if (no.getEsquerda() != null) {
+                    imprimirArvoreRecursivo(no.getEsquerda(), prefixo + (eNo ? "    " : (eFolha ? "    " : "│   ")), true, false);
+                }
+            }
+        }
+    }
 }
