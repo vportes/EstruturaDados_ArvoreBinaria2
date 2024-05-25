@@ -86,7 +86,7 @@ public class ArvoreBinaria {
             return;
         }
         emOrdem(no.getEsquerda());
-        System.out.println(no.getConteudo());
+        System.out.print(no.getConteudo() + " ");
         emOrdem(no.getDireita());
     }
 
@@ -120,7 +120,7 @@ public class ArvoreBinaria {
 
     public void mostrarCaminho(int numero) {
         if (buscaRecursiva(raiz, numero) == null) {
-            System.out.println("Número não encontrado na árvore.");
+            System.out.println("Elemento não encontrado na árvore.");
         } else {
             System.out.print("Caminho até o número: ");
             buscaMostrarCaminho(raiz, numero);
@@ -145,7 +145,6 @@ public class ArvoreBinaria {
     }
 
     public void imprimirArvore() {
-        System.out.println("\n\nArvore binária: ");
         System.out.print("\n    ");
         imprimirArvoreRecursivo(raiz, "", true, true);
     }
